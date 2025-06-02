@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Recommender</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const searchInput = document.getElementById("searchInput");
+      const suggestionsBox = document.getElementById("suggestionsBox");
+
+      searchInput.addEventListener("input", function () {
+        const query = searchInput.value.toLowerCase();
+        const allTitles = JSON.parse(document.getElementById("allTitles").textContent);
+        const filtered = allTitles.filter(title => title.toLowerCase().includes(query)).slice(0, 8);
+
+        suggestionsBox.innerHTML = "";
+        if (query && filtered.length) {
+          filtered.forEach(title => {
+            const item = document.createElement("div");
+            item.classList.add("px-4", "py-2", "hover:bg-gray-200", "cursor-pointer");
+            item.textContent = title;
+            item.onclick = () => {
+              searchInput.value = title;
+              suggestionsBox.innerHTML = "";
+            };
+            suggestionsBox.appendChild(item);
+          });
+          suggestionsBox.classList.remove("hidden");
+        } else {
+          suggestionsBox.classList.add("hidden");
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
+          suggestionsBox.classList.add("hidden");
+        }
+      });
+    });
+  </script>
+
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-6">🎬 Movie Recommender</h1>
+    <h2 class="text-lg font-medium text-center mb-6">lakjlakdjalsk</h2>
+
+    <form method="POST" class="mb-6 space-y-4">
+      <div class="relative">
+        <input type="text" name="search" id="searchInput" autocomplete="off" placeholder="Start typing..."
+          class="w-full mt-1 px-4 py-2 border rounded-md shadow-sm">
+        <div id="suggestionsBox"
+          class="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded-md shadow-lg hidden"></div>
+      </div>
+
+
+      <div>
+        <label class="block text-lg font-medium text-gray-700">Select Genre</label>
+        <select name="genre" class="w-full mt-1 px-4 py-2 border rounded-md shadow-sm">
+          <option value="">All Genres</option>
+          <option value="Action">Action</option>
+          <option value="Drama">Drama</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Crime">Crime</option>
+          <option value="Fantasy">Fantasy</option>
+          <option value="Romance">Romance</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-lg font-medium text-gray-700">Select a Movie</label>
+        <select name="movie" class="w-full mt-1 px-4 py-2 border rounded-md shadow-sm">
+          {% for movie in movies %}
+          <option value="{{ movie }}" {% if movie==selected %}selected{% endif %}>{{ movie }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="flex space-x-2 mt-4">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+          Submit
+        </button>
+        <button type="submit" name="surprise" value="true"
+          class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">
+          Surprise Me!
+        </button>
+      </div>
+
+    </form>
+
+    {% if recommendations %}
+    {% if selected %}
+    <p class="text-lg text-gray-700 mb-4">
+      Showing recommendations based on:
+      <span class="font-semibold text-indigo-600">{{ selected }}</span>
+    </p>
+    {% endif %}
+    <h2 class="text-2xl font-semibold mb-4">Recommended Movies</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for movie in recommendations %}
+      <a href="{{ url_for('movie_detail', title=movie.title) }}"
+        class="block bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <img src="{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-64 object-cover">
+        <div class="p-4">
+          <h3 class="text-lg font-bold mb-1">{{ movie.title }}</h3>
+          <div class="flex items-center mb-2">
+            <span class="text-yellow-400 text-xl">★</span>
+            <span class="ml-1 font-semibold">{{ movie.vote_average | round(1)}}/10</span>
+          </div>
+          <p class="text-sm text-gray-600 line-clamp-3">{{ movie.overview }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+
+  <script type="application/json" id="allTitles">{{ all_titles | safe }}</script>
+
+</body>
+
+</html>

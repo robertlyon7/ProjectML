@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movie Recommender</title>
+  <title>Recommendo - Movie Recommender</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
   <script>
@@ -47,12 +47,13 @@
 
 <body class="bg-gray-100 font-sans">
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mb-6">🎬 Movie Recommender</h1>
-    <h2 class="text-lg font-medium text-center mb-6">lakjlakdjalsk</h2>
+    <h1 class="text-3xl font-bold text-center mb-6">🎬 Sigma Recommendo</h1>
+    <h2 class="text-lg font-medium text-center mb-6">Movie Recommender</h2>
 
     <form method="POST" class="mb-6 space-y-4">
       <div class="relative">
-        <input type="text" name="search" id="searchInput" autocomplete="off" placeholder="Start typing..."
+        <label class="block text-lg font-medium text-gray-700">Search Name</label>
+        <input type="text" name="search" id="searchInput" autocomplete="off" placeholder="Search a movie name..."
           class="w-full mt-1 px-4 py-2 border rounded-md shadow-sm">
         <div id="suggestionsBox"
           class="absolute z-10 bg-white border border-gray-300 w-full mt-1 rounded-md shadow-lg hidden"></div>
@@ -105,7 +106,7 @@
       {% for movie in recommendations %}
       <a href="{{ url_for('movie_detail', title=movie.title) }}"
         class="block bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        <img src="{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-64 object-cover">
+        <img src="{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-100 object-cover">
         <div class="p-4">
           <h3 class="text-lg font-bold mb-1">{{ movie.title }}</h3>
           <div class="flex items-center mb-2">
@@ -118,11 +119,7 @@
       {% endfor %}
     </div>
     {% endif %}
-
   </div>
-
   <script type="application/json" id="allTitles">{{ all_titles | safe }}</script>
-
 </body>
-
 </html>

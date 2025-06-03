@@ -29,7 +29,7 @@ def home():
             filtered_df = filtered_df[filtered_df['genres'].str.contains(
                 selected_genre, case=False, na=False)]
 
-        if surprise:  # if the surprise me button was clicked
+        if surprise: 
             selected_movie = random.choice(filtered_df['title'].tolist())
 
         recommendations = recommender.recommend(
